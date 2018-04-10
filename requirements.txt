@@ -1,2 +1,4 @@
 Flask==0.10.1
 nose
+
+waitress==1.0.1  
