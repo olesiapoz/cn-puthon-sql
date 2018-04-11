@@ -14,9 +14,9 @@ import MySQLdb
 app = Flask(__name__)
 
 MYSQL_PORT=int(os.environ.get('MYSQL_PORT'))
-MYSQL_NAME=os.environ.get('MYSQL_NAME'))
-MYSQL_USER=os.environ.get('MYSQL_USER'))
-MYSQL_PSWD=os.environ.get('MYSQL_PSWD'))
+MYSQL_NAME=os.environ.get('MYSQL_NAME')
+MYSQL_USER=os.environ.get('MYSQL_USER')
+MYSQL_PSWD=os.environ.get('MYSQL_PSWD')
 
 def mk_conn():
     return MySQLdb.connect(db=MYSQL_NAME, user=MYSQL_USER, passwd=MYSQL_PSWD, port=MYSQL_PORT)
