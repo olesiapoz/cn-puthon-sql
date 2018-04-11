@@ -34,7 +34,7 @@ def home_index():
     for row in rows:
         a_dict = {}
         a_dict['version'] = row[1]
-        a_dict['buildtime'] = row[0]
+        # a_dict['buildtime'] = row[0]
         a_dict['methods'] = row[3]
         a_dict['links'] = row[2]
         api_list.append(a_dict)
