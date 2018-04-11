@@ -28,8 +28,9 @@ def home_index():
     cur = conn.cursor()
     print ("Opened database successfully")
     api_list=[]
-    cursor = cur.execute("SELECT buildtime, version, methods, links   from apirelease")     
-    for row in cursor.fetchall():
+    cur.execute("SELECT buildtime, version, methods, links   from apirelease")     
+    rows = cur.fetchall()
+    for row in rows:
         a_dict = {}
         a_dict['version'] = row[1]
         a_dict['buildtime'] = row[0]
