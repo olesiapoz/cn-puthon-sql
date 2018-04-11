@@ -13,10 +13,18 @@ import MySQLdb
 
 app = Flask(__name__)
 
+MYSQL_PORT=int(os.environ.get('MYSQL_PORT'))
+MYSQL_NAME=os.environ.get('MYSQL_NAME'))
+MYSQL_USER=os.environ.get('MYSQL_USER'))
+MYSQL_PSWD=os.environ.get('MYSQL_PSWD'))
+
+def mk_conn():
+    return MySQLdb.connect(db=MYSQL_NAME, user=MYSQL_USER, passwd=MYSQL_PSWD, port=MYSQL_PORT)
+
 @app.route("/api/v1/info")
 def home_index():
-	conn = MySQLdb.connect(host="localhost", db = "MYSQLCONNSTR_localdb")
-	print ("Opened database successfully");
+	conn = mk_conn()
+	print ("Opened database successfully")
 	api_list=[]
 	cursor = conn.execute("SELECT buildtime, version, methods, links   from apirelease")     
 	for row in cursor:
@@ -30,7 +38,7 @@ def home_index():
 	return jsonify({'api_version': api_list}), 200
 
 def list_users():
-    conn = MySQLdb.connect(host="localhost", db = "MYSQLCONNSTR_localdb")
+    conn = mk_conn()
     print ("Opened database successfully")
     api_list=[]
     cursor = conn.execute("SELECT username, full_name, emailid, password, id from users")
@@ -51,7 +59,7 @@ def get_users():
     return list_users()
 
 def list_user(user_id):  
-    conn = MySQLdb.connect(host="localhost", db = "MYSQLCONNSTR_localdb")       
+    conn = mk_conn()
     print("Opened database successfully");       
     api_list = []       
     cursor = conn.cursor()       
@@ -73,7 +81,7 @@ def resource_not_found(error):
     return make_response(jsonify({'error': 'Resource not found!'}),  404) 
 
 def add_user(new_user):
-    conn = MySQLdb.connect(host="localhost", db = "MYSQLCONNSTR_localdb")
+    conn = mk_conn()
     print ("Opened database successfully")
     api_list=[]
     cursor=conn.cursor()
@@ -107,7 +115,7 @@ def delete_user():
     return jsonify({'status': del_user(user)}), 200
 
 def del_user(del_user):
-    conn = MySQLdb.connect(host="localhost", db = "MYSQLCONNSTR_localdb")
+	conn = mk_conn()
     print ("Opened database successfully")
     cursor=conn.cursor()
     cursor.execute("SELECT * from users where username=? ",      (del_user,))
@@ -121,7 +129,7 @@ def del_user(del_user):
     return "Success" 
 
 def upd_user(user):
-    conn = MySQLdb.connect(host="localhost", db = "MYSQLCONNSTR_localdb")
+	conn = mk_conn()
     print ("Opened database successfully")
     cursor=conn.cursor()
     print(user['id'])
@@ -155,7 +163,7 @@ def update_user(user_id):
     return jsonify({'status': upd_user(user)}), 200
 
 def list_tweets():
-    conn = MySQLdb.connect(host="localhost", db = "MYSQLCONNSTR_localdb")
+    conn = mk_conn()
     print ("Opened database successfully")
     api_list=[]
     cursor = conn.execute("SELECT username, body, tweet_time, id from tweets")
@@ -174,7 +182,7 @@ def get_tweets():
     return list_tweets()
 
 def add_tweet(new_tweets):
-    conn = MySQLdb.connect(host="localhost", db = "MYSQLCONNSTR_localdb")
+    conn = mk_conn()
     print ("Opened database successfully")
     cursor=conn.cursor()
 
@@ -197,15 +205,11 @@ def add_tweets():
         abort(400)
     user_tweet = {'username' : request.json['username'], 'body': request.json['body'], 'created_at' : strftime("%Y-%m-%dT%H:%M:%SZ", gmtime())}
     #print (user_tweet)
-    """{
-	"username":"mahesh@rocks",
-	"body": "It works" 
-    }"""
     return  jsonify({'status': add_tweet(user_tweet)}), 201
 
 def list_tweet(user_id):
     print (user_id)
-    conn = MySQLdb.connect(host="localhost", db = "MYSQLCONNSTR_localdb")
+    conn = mk_conn()
     print ("Opened database successfully")
     api_list=[]       
     cursor=conn.cursor()
