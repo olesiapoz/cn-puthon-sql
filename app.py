@@ -23,19 +23,19 @@ def mk_conn():
 
 @app.route("/api/v1/info")
 def home_index():
-	conn = mk_conn()
-	print ("Opened database successfully")
-	api_list=[]
-	cursor = conn.execute("SELECT buildtime, version, methods, links   from apirelease")     
-	for row in cursor:
-		a_dict = {}
-		a_dict['version'] = row[1]
-		a_dict['buildtime'] = row[0]
-		a_dict['methods'] = row[3]
-		a_dict['links'] = row[2]
-		api_list.append(a_dict)
-	conn.close()    
-	return jsonify({'api_version': api_list}), 200
+    conn = mk_conn()
+    print ("Opened database successfully")
+    api_list=[]
+    cursor = conn.execute("SELECT buildtime, version, methods, links   from apirelease")     
+    for row in cursor:
+        a_dict = {}
+        a_dict['version'] = row[1]
+        a_dict['buildtime'] = row[0]
+        a_dict['methods'] = row[3]
+        a_dict['links'] = row[2]
+        api_list.append(a_dict)
+    conn.close()
+    return jsonify({'api_version': api_list}), 200
 
 def list_users():
     conn = mk_conn()
@@ -60,7 +60,7 @@ def get_users():
 
 def list_user(user_id):  
     conn = mk_conn()
-    print("Opened database successfully");       
+    print("Opened database successfully")       
     api_list = []       
     cursor = conn.cursor()       
     cursor.execute("SELECT * from users where id=?",(user_id,))       
@@ -83,7 +83,6 @@ def resource_not_found(error):
 def add_user(new_user):
     conn = mk_conn()
     print ("Opened database successfully")
-    api_list=[]
     cursor=conn.cursor()
     cursor.execute("SELECT * from users where username=? or emailid=?",(new_user['username'],new_user['email']))
     data = cursor.fetchall()
@@ -115,7 +114,7 @@ def delete_user():
     return jsonify({'status': del_user(user)}), 200
 
 def del_user(del_user):
-	conn = mk_conn()
+    conn = mk_conn()
     print ("Opened database successfully")
     cursor=conn.cursor()
     cursor.execute("SELECT * from users where username=? ",      (del_user,))
@@ -129,7 +128,7 @@ def del_user(del_user):
     return "Success" 
 
 def upd_user(user):
-	conn = mk_conn()
+    conn = mk_conn()
     print ("Opened database successfully")
     cursor=conn.cursor()
     print(user['id'])
@@ -211,7 +210,6 @@ def list_tweet(user_id):
     print (user_id)
     conn = mk_conn()
     print ("Opened database successfully")
-    api_list=[]       
     cursor=conn.cursor()
     cursor.execute("SELECT * from tweets  where id=?",(user_id,))
     data = cursor.fetchall() 
