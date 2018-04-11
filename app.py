@@ -9,7 +9,8 @@ from flask import abort
 from flask import make_response, url_for
 from time import gmtime, strftime
 from flask import render_template 
-import MySQLdb
+import MySQLdb, os
+
 
 app = Flask(__name__)
 
