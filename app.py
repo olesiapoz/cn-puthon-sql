@@ -25,16 +25,18 @@ def mk_conn():
 @app.route("/api/v1/info")
 def home_index():
     conn = mk_conn()
+    cur = conn.cursor()
     print ("Opened database successfully")
     api_list=[]
-    cursor = conn.execute("SELECT buildtime, version, methods, links   from apirelease")     
-    for row in cursor:
+    cursor = cur.execute("SELECT buildtime, version, methods, links   from apirelease")     
+    for row in cursor.fetchall():
         a_dict = {}
         a_dict['version'] = row[1]
         a_dict['buildtime'] = row[0]
         a_dict['methods'] = row[3]
         a_dict['links'] = row[2]
         api_list.append(a_dict)
+    cur.close()
     conn.close()
     return jsonify({'api_version': api_list}), 200
 
