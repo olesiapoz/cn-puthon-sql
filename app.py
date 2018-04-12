@@ -182,7 +182,7 @@ def list_tweets():
             api_list.append(tweets)
     else:
         return api_list
-    cut.close()
+    cur.close()
     conn.close()
     return jsonify({'tweets_list': api_list})
 
