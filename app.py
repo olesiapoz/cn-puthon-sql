@@ -10,7 +10,7 @@ from flask import make_response, url_for
 from time import gmtime, strftime
 from flask import render_template 
 import MySQLdb, os
-import datetime
+
 
 
 app = Flask(__name__)
@@ -25,13 +25,13 @@ def mk_conn():
 
 @app.route("/api/v1/info")
 def home_index():
-    conn = mk_conn()
+    conn = mk_conn()     
     cur = conn.cursor()
     print ("Opened database successfully")
     api_list=[]
     cur.execute("SELECT buildtime, version, methods, links   from apirelease")     
-    rows = cur.fetchall()
-    for row in rows:
+    data = cur.fetchall()
+    for row in data:
         a_dict = {}
         a_dict['version'] = row[1]
         a_dict['buildtime'] = str(row[0])
@@ -43,11 +43,13 @@ def home_index():
     return jsonify({'api_version': api_list}), 200
 
 def list_users():
-    conn = mk_conn()
+    conn = mk_conn()    
+    cur = conn.cursor()
     print ("Opened database successfully")
     api_list=[]
-    cursor = conn.execute("SELECT username, full_name, emailid, password, id from users")
-    for row in cursor:
+    cur.execute("SELECT username, full_name, emailid, password, id from users")
+    data = cur.fetchall()
+    for row in data:
         a_dict = {}
         a_dict['username'] = row[0]
         a_dict['name'] = row[1]
@@ -55,6 +57,7 @@ def list_users():
         a_dict['password'] = row[3]
         a_dict['id'] = row[4]
         api_list.append(a_dict)
+    cur.close()
     conn.close()
     return jsonify({'user_list': api_list})
 
@@ -64,14 +67,15 @@ def get_users():
     return list_users()
 
 def list_user(user_id):  
-    conn = mk_conn()
+    conn = mk_conn()     
+    cur = conn.cursor()
     print("Opened database successfully")       
     api_list = []       
-    cursor = conn.cursor()       
-    cursor.execute("SELECT * from users where id=?",(user_id,))       
-    data = cursor.fetchall()       
+    cur.execute("SELECT * from users where id=?",(user_id,))       
+    data = cur.fetchall()       
     if len(data) != 0:          
         user = {'username': data[0][0], 'name': data[0][3], 'email': data[0][1], 'password': data[0][2],'id': data[0][4]}
+        cur.close()
         conn.close()
     else:
         abort(404)             
@@ -88,13 +92,14 @@ def resource_not_found(error):
 def add_user(new_user):
     conn = mk_conn()
     print ("Opened database successfully")
-    cursor=conn.cursor()
-    cursor.execute("SELECT * from users where username=? or emailid=?",(new_user['username'],new_user['email']))
-    data = cursor.fetchall()
+    cur = conn.cursor()
+    cur.execute("SELECT * from users where username=? or emailid=?",(new_user['username'],new_user['email']))
+    data = cur.fetchall()
     if len(data) != 0:
         abort(409)
     else:
-        cursor.execute("insert into users (username, emailid, password, full_name) values(?,?,?,?)",(new_user['username'],new_user['email'], new_user['password'], new_user['name']))
+        cur.execute("insert into users (username, emailid, password, full_name) values(?,?,?,?)",(new_user['username'],new_user['email'], new_user['password'], new_user['name']))
+        cur.commit()
         conn.commit()
         return "Success"
 
@@ -121,25 +126,23 @@ def delete_user():
 def del_user(del_user):
     conn = mk_conn()
     print ("Opened database successfully")
-    cursor=conn.cursor()
-    cursor.execute("SELECT * from users where username=? ",      (del_user,))
-    data = cursor.fetchall()       
-    print (data)       
+    cur=conn.cursor()
+    cur.execute("SELECT * from users where username=? ",      (del_user,))
+    data = cur.fetchall()
     if len(data) == 0:         
         abort(404)       
     else:        
-        cursor.execute("delete from users where username==?",(del_user,))        
+        cur.execute("delete from users where username==?",(del_user,))        
+        cur.commit()
         conn.commit()          
     return "Success" 
 
 def upd_user(user):
     conn = mk_conn()
     print ("Opened database successfully")
-    cursor=conn.cursor()
-    print(user['id'])
-    cursor.execute("SELECT * from users where id=?", (user['id'],))
-    data = cursor.fetchall()
-    print (data)
+    cur =conn.cursor()
+    cur.execute("SELECT * from users where id=?", (user['id'],))
+    data = cur.fetchall()
     if len(data) == 0:
         abort(404)
     else:
@@ -147,9 +150,10 @@ def upd_user(user):
     for i in key_list:
         if i != "id":
             print (user, i)
-            # cursor.execute("UPDATE users set {0}=? where id=? ", (i, user[i], user['id']))
-        cursor.execute("""UPDATE users SET {0} = ? WHERE id = ?""".format(i), (user[i], user['id'],))
-    conn.commit()
+            # cur.execute("UPDATE users set {0}=? where id=? ", (i, user[i], user['id']))
+        cur.execute("""UPDATE users SET {0} = ? WHERE id = ?""".format(i), (user[i], user['id'],))
+        cur.commit()
+        conn.commit()
     return "Success"
 
 @app.route('/api/v1/users/<int:user_id>', methods=['PUT'])
@@ -158,7 +162,6 @@ def update_user(user_id):
     if not request.json:
          abort(400)
     user['id']=user_id
-    print(user)
     key_list = request.json.keys()
     print(key_list)
     for i in key_list:
@@ -167,17 +170,19 @@ def update_user(user_id):
     return jsonify({'status': upd_user(user)}), 200
 
 def list_tweets():
-    conn = mk_conn()
+    conn = mk_conn()     
+    cur = conn.cursor()
     print ("Opened database successfully")
     api_list=[]
-    cursor = conn.execute("SELECT username, body, tweet_time, id from tweets")
-    data = cursor.fetchall()
+    cur.execute("SELECT username, body, tweet_time, id from tweets")
+    data = cur.fetchall()
     if data != 0:
         for row in data:
             tweets = {'Tweet By' :  row[0] , 'Body' : row[1], 'Timestamp': row[2], 'id' : row[3]}
             api_list.append(tweets)
     else:
         return api_list
+    cut.close()
     conn.close()
     return jsonify({'tweets_list': api_list})
 
@@ -188,18 +193,17 @@ def get_tweets():
 def add_tweet(new_tweets):
     conn = mk_conn()
     print ("Opened database successfully")
-    cursor=conn.cursor()
-
-    cursor.execute("SELECT * from users where username=? ", (new_tweets['username'],))
-    data = cursor.fetchall()
+    cur = conn.cursor()
+    cur.execute("SELECT * from users where username=? ", (new_tweets['username'],))
+    data = cur.fetchall()
     print("data")
     print(data)
     print(new_tweets)
     if len(data) == 0:
         abort(404)
     else:
-        cursor.execute("INSERT into tweets (username, body, tweet_time) values(?,?,?)", (new_tweets['username'], new_tweets['body'], new_tweets['created_at']))
-  
+        cur.execute("INSERT into tweets (username, body, tweet_time) values(?,?,?)", (new_tweets['username'], new_tweets['body'], new_tweets['created_at']))
+    cur.close()
     conn.close()
     return "Success"
     
@@ -215,14 +219,15 @@ def list_tweet(user_id):
     print (user_id)
     conn = mk_conn()
     print ("Opened database successfully")
-    cursor=conn.cursor()
-    cursor.execute("SELECT * from tweets  where id=?",(user_id,))
-    data = cursor.fetchall() 
+    cur = conn.cursor()
+    cur.execute("SELECT * from tweets  where id=?",(user_id,))
+    data = cur.fetchall() 
     print (data) 
     if len(data) == 0:
         abort(404)
     else: 
         user = {'id': data[0][0],'username': data[0][1], 'body': data[0][2],'tweet_time': data[0][3]}
+    cur.close()
     conn.close()
     return jsonify(user) 
 
