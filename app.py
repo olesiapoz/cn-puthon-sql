@@ -3,7 +3,6 @@ from flask import Flask
 from flask import make_response
 from flask import jsonify
 import json
-"import sqlite3"
 from flask import Flask, request, jsonify
 from flask import abort
 from flask import make_response, url_for
@@ -239,7 +238,7 @@ def get_tweet(id):
 
 @app.route('/adduser')
 def adduser():
-    return render_template('client/adduser.html')
+    return render_template('./Client/adduser.html')
   
 if __name__ == "__main__":
     app.run()

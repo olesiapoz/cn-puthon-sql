@@ -1,2 +1,1 @@
-# cn-python
-# cn-python 2
+Cloud native app on Python for Azure Apps
