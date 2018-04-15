@@ -238,7 +238,7 @@ def get_tweet(id):
 
 @app.route('/adduser')
 def adduser():
-    return render_template('./Client/adduser.html')
+    return render_template('adduser.html')
   
 if __name__ == "__main__":
     app.run()
