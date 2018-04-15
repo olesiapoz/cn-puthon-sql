@@ -241,9 +241,9 @@ def adduser():
     return render_template('adduser.html')
     
 @app.route('/addtweets')
-    def addtweetjs():
-        return render_template('addtweets.html') 
-  
+def addtweetjs():
+    return render_template('addtweets.html')
+
 if __name__ == "__main__":
     app.run()
     "app.run(host='0.0.0.0', port=5000, debug=True)"
