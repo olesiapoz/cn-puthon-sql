@@ -94,6 +94,7 @@ def add_user(new_user):
     cur = conn.cursor()
     cur.execute("SELECT * from users where username=? or emailid=?",(new_user['username'],new_user['email']))
     data = cur.fetchall()
+    print(data)
     if len(data) != 0:
         abort(409)
     else:
@@ -108,7 +109,6 @@ def create_user():
     if not request.json or not 'username' in request.json or not 'email' in request.json or not 'password' in request.json:
         abort(400)
     user = {'username': request.json['username'], 'email': request.json['email'], 'name': request.json.get('name',""), 'password': request.json['password']}
-    print(user)
     return jsonify({'status': add_user(user)}), 201
 
 @app.errorhandler(400)
