@@ -12,7 +12,7 @@ function User(data) {
    self.name = ko.observable(); 
    self.username= ko.observable(); 
    self.email= ko.observable(); 
-   self.password= ko.observable(); 
+   self.password= ko.observable(); }
 
    self.addUser = function() { 
     self.save(); 
@@ -34,7 +34,7 @@ function User(data) {
     }), 
     success: function(data) { 
        alert("success") 
-            console.log("Pushing to users array"); 
+            console.print("Pushing to users array"); 
             self.push(new User({ name: data.name, username: 
             data.username,email: data.email ,password: 
              data.password})); 
