@@ -52,5 +52,5 @@ $.getJSON('/api/v1/users', function(userModels) {
     var t = $.map(userModels.user_list, function(item) {
         return new User(item);       
     });      
-    self.user_list([t]);     
+    self.user_list.t;     
 }); 
