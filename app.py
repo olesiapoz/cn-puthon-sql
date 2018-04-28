@@ -13,6 +13,7 @@ from flask_cors import CORS, cross_origin
 
 
 app = Flask(__name__)
+app.debug = True
 
 CORS(app)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -24,7 +25,7 @@ MYSQL_PSWD=os.environ.get('MYSQL_PSWD')
 
 def mk_conn():
     return MySQLdb.connect(db=MYSQL_NAME, user=MYSQL_USER, passwd=MYSQL_PSWD, port=MYSQL_PORT)
-    '''return MySQLdb.connect(MYSQLCON)'''
+    '''return MySQLdb.connect(MYSQLCONNSTR_localdb)'''
 
 @app.route("/api/v1/info")
 def home_index():
@@ -74,7 +75,7 @@ def list_user(user_id):
     cur = conn.cursor()
     print("Opened database successfully")       
     api_list = []       
-    cur.execute("SELECT * from users where id=?",(user_id,))       
+    cur.execute("SELECT * from users where id=%s",(user_id,))       
     data = cur.fetchall()       
     if len(data) != 0:          
         user = {'username': data[0][0], 'name': data[0][3], 'email': data[0][1], 'password': data[0][2],'id': data[0][4]}
@@ -96,16 +97,14 @@ def add_user(new_user):
     conn = mk_conn()
     print ("Opened database successfully")
     cur = conn.cursor()
-    print(new_user['username'],new_user['email'])
-    cur.execute("SELECT * from users where username = ? or emailid = ? ",(new_user['username'],new_user['email']))
+    print (new_user['username'], new_user['email'])
+    cur.execute("SELECT * from users where username = %s or emailid = %s ", (new_user['username'], new_user['email']))
     data = cur.fetchall()
     print(data)
     if len(data) != 0:
         abort(409)
-    else:  
-        print(new_user['username'],new_user['email'], new_user['password'], new_user['name']) 
-        cur.execute("insert into users (username, emailid, password, full_name) values(?,?,?,?)",(new_user['username'],new_user['email'], new_user['password'], new_user['name']))
-        cur.commit()
+    else:
+        cur.execute("insert into users (username, emailid, password, full_name) values(%s,%s,%s,%s)",(new_user['username'],new_user['email'], new_user['password'], new_user['name']))
         conn.commit()
         return "Success"
 
@@ -132,13 +131,13 @@ def del_user(del_user):
     conn = mk_conn()
     print ("Opened database successfully")
     cur=conn.cursor()
-    cur.execute("SELECT * from users where username=? ", (del_user,))
+    cur.execute("SELECT * from users where username= %s ", (del_user,))
     data = cur.fetchall()
     if len(data) == 0:         
         abort(404)       
     else:        
-        cur.execute("delete from users where username==?",(del_user,))        
-        cur.commit()
+        cur.execute("delete from users where username== %s",(del_user,))        
+        
         conn.commit()          
     return "Success" 
 
@@ -146,7 +145,7 @@ def upd_user(user):
     conn = mk_conn()
     print ("Opened database successfully")
     cur =conn.cursor()
-    cur.execute("SELECT * from users where id=?", (user['id'],))
+    cur.execute("SELECT * from users where id= %s ", (user['id'],))
     data = cur.fetchall()
     if len(data) == 0:
         abort(404)
@@ -155,9 +154,8 @@ def upd_user(user):
     for i in key_list:
         if i != "id":
             print (user, i)
-            # cur.execute("UPDATE users set {0}=? where id=? ", (i, user[i], user['id']))
-        cur.execute("""UPDATE users SET {0} = ? WHERE id = ?""".format(i), (user[i], user['id'],))
-        cur.commit()
+            # cur.execute("UPDATE users set {0}=%s where id=%s ", (i, user[i], user['id']))
+        cur.execute("""UPDATE users SET {0} = %s WHERE id = %s""".format(i), (user[i], user['id'],))
         conn.commit()
     return "Success"
 
@@ -199,7 +197,7 @@ def add_tweet(new_tweets):
     conn = mk_conn()
     print ("Opened database successfully")
     cur = conn.cursor()
-    cur.execute("SELECT * from users where username=? ", (new_tweets['username'],))
+    cur.execute("SELECT * from users where username=%s ", (new_tweets['username'],))
     data = cur.fetchall()
     print("data")
     print(data)
@@ -207,7 +205,7 @@ def add_tweet(new_tweets):
     if len(data) == 0:
         abort(404)
     else:
-        cur.execute("INSERT into tweets (username, body, tweet_time) values(?,?,?)", (new_tweets['username'], new_tweets['body'], new_tweets['created_at']))
+        cur.execute("INSERT into tweets (username, body, tweet_time) values(%s,%s,%s)", (new_tweets['username'], new_tweets['body'], new_tweets['created_at']))
     cur.close()
     conn.close()
     return "Success"
@@ -225,7 +223,7 @@ def list_tweet(user_id):
     conn = mk_conn()
     print ("Opened database successfully")
     cur = conn.cursor()
-    cur.execute("SELECT * from tweets  where id=?",(user_id,))
+    cur.execute("SELECT * from tweets  where id=%s",(user_id,))
     data = cur.fetchall() 
     print (data) 
     if len(data) == 0:
