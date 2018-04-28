@@ -101,7 +101,8 @@ def add_user(new_user):
     print(data)
     if len(data) != 0:
         abort(409)
-    else:
+    else:  
+        print(new_user['username'],new_user['email'], new_user['password'], new_user['name']) 
         cur.execute("insert into users (username, emailid, password, full_name) values(?,?,?,?)",(new_user['username'],new_user['email'], new_user['password'], new_user['name']))
         cur.commit()
         conn.commit()
@@ -130,7 +131,7 @@ def del_user(del_user):
     conn = mk_conn()
     print ("Opened database successfully")
     cur=conn.cursor()
-    cur.execute("SELECT * from users where username=? ",      (del_user,))
+    cur.execute("SELECT * from users where username=? ", (del_user,))
     data = cur.fetchall()
     if len(data) == 0:         
         abort(404)       
