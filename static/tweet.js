@@ -36,8 +36,7 @@ function Tweet(data) {
     success: function(data) { 
        alert("success") 
             console.log("Pushing to users array"); 
-            self.push(new Tweet({ username: data.username,body: 
-            data.body})); 
+            self.push(new Tweet({ username: data.username, body: data.body})); 
             return; 
     }, 
     error: function() { 

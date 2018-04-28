@@ -10,6 +10,7 @@ from time import gmtime, strftime
 from flask import render_template 
 import MySQLdb, os
 from flask_cors import CORS, cross_origin 
+from time import gmtime, strftime
 
 
 app = Flask(__name__)
@@ -137,7 +138,6 @@ def del_user(del_user):
         abort(404)       
     else:        
         cur.execute("delete from users where username== %s",(del_user,))        
-        
         conn.commit()          
     return "Success" 
 
@@ -181,7 +181,7 @@ def list_tweets():
     data = cur.fetchall()
     if data != 0:
         for row in data:
-            tweets = {'Tweet By' :  row[0] , 'Body' : row[1], 'Timestamp': row[2], 'id' : row[3]}
+            tweets = {'Tweet By' :  row[0] , 'Body' : row[1], 'Timestamp': str(row[2]), 'id' : row[3]}
             api_list.append(tweets)
     else:
         return api_list
@@ -206,6 +206,8 @@ def add_tweet(new_tweets):
         abort(404)
     else:
         cur.execute("INSERT into tweets (username, body, tweet_time) values(%s,%s,%s)", (new_tweets['username'], new_tweets['body'], new_tweets['created_at']))
+        
+    conn.commit()   
     cur.close()
     conn.close()
     return "Success"
@@ -214,7 +216,7 @@ def add_tweet(new_tweets):
 def add_tweets():       
     if not request.json or not 'username' in request.json or not 'body' in request.json:
         abort(400)
-    user_tweet = {'username' : request.json['username'], 'body': request.json['body'], 'created_at' : strftime("%Y-%m-%dT%H:%M:%SZ", gmtime())}
+    user_tweet = {'username' : request.json['username'], 'body': request.json['body'], 'created_at' : strftime("%Y-%m-%d %H:%M:%S", gmtime())}
     #print (user_tweet)
     return  jsonify({'status': add_tweet(user_tweet)}), 201
 
