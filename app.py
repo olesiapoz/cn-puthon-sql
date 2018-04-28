@@ -96,7 +96,8 @@ def add_user(new_user):
     conn = mk_conn()
     print ("Opened database successfully")
     cur = conn.cursor()
-    cur.execute("SELECT * from users where username=? or emailid=?",(new_user['username'],new_user['email']))
+    print(new_user['username'],new_user['email'])
+    cur.execute("SELECT * from users where username = ? or emailid = ? ",(new_user['username'],new_user['email']))
     data = cur.fetchall()
     print(data)
     if len(data) != 0:
