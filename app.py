@@ -252,6 +252,15 @@ def addtweetjs():
 def main():       
     return render_template('main.html') 
 
+@app.route('/addname')     
+def addname():    
+    if request.args.get('yourname'):
+        session['name'] = request.args.get('yourname')
+        # And then redirect the user to the main page       
+        return redirect(url_for('main'))     
+    else:       
+        return render_template('addname.html', session=session) 
+
 if __name__ == "__main__":
     app.run()
     "app.run(host='0.0.0.0', port=5000, debug=True)"
