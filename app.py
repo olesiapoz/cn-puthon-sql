@@ -5,7 +5,7 @@ from flask import jsonify
 import json
 from flask import Flask, request, jsonify
 from flask import abort
-from flask import make_response, url_for
+from flask import make_response, url_for, redirect, session
 from time import gmtime, strftime
 from flask import render_template 
 import MySQLdb, os
@@ -259,7 +259,12 @@ def addname():
         # And then redirect the user to the main page       
         return redirect(url_for('main'))     
     else:       
-        return render_template('addname.html', session=session) 
+        return render_template('addname.html', session=session)
+
+@app.route('/clear')       
+def clearsession():       # Clear the session       
+    session.clear()       # Redirect the user to the main page       
+    return redirect(url_for('main')) 
 
 if __name__ == "__main__":
     app.run()
