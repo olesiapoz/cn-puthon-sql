@@ -12,7 +12,7 @@ function User(data) {
    self.name = ko.observable(); 
    self.username= ko.observable(); 
    self.email= ko.observable(); 
-   self.password= ko.observable(); }
+   self.password= ko.observable(); 
 
    self.addUser = function() { 
     self.save(); 
