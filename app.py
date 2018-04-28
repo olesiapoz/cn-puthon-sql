@@ -15,6 +15,7 @@ from flask_cors import CORS, cross_origin
 app = Flask(__name__)
 
 CORS(app)
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 MYSQL_PORT=int(os.environ.get('MYSQL_PORT'))
 "MYSQL_NAME=os.environ.get('MYSQL_NAME')"
