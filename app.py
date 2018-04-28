@@ -9,18 +9,22 @@ from flask import make_response, url_for
 from time import gmtime, strftime
 from flask import render_template 
 import MySQLdb, os
-
+from flask_cors import CORS, cross_origin 
 
 
 app = Flask(__name__)
 
+CORS(app)
+
 MYSQL_PORT=int(os.environ.get('MYSQL_PORT'))
-MYSQL_NAME=os.environ.get('MYSQL_NAME')
-MYSQL_USER=os.environ.get('MYSQL_USER')
-MYSQL_PSWD=os.environ.get('MYSQL_PSWD')
+"MYSQL_NAME=os.environ.get('MYSQL_NAME')"
+"MYSQL_USER=os.environ.get('MYSQL_USER')"
+"MYSQL_PSWD=os.environ.get('MYSQL_PSWD')"
+MYSQLCON = os.environ.get('MYSQL_CON')
 
 def mk_conn():
-    return MySQLdb.connect(db=MYSQL_NAME, user=MYSQL_USER, passwd=MYSQL_PSWD, port=MYSQL_PORT)
+    """return MySQLdb.connect(db=MYSQL_NAME, user=MYSQL_USER, passwd=MYSQL_PSWD, port=MYSQL_PORT)"""
+    return MySQLdb.connect(MYSQLCON)
 
 @app.route("/api/v1/info")
 def home_index():
@@ -243,6 +247,10 @@ def adduser():
 @app.route('/addtweets')
 def addtweetjs():
     return render_template('addtweets.html')
+
+ @app.route('/')      
+ def main():       
+    return render_template('main.html') 
 
 if __name__ == "__main__":
     app.run()
