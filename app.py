@@ -249,8 +249,8 @@ def adduser():
 def addtweetjs():
     return render_template('addtweets.html')
 
- @app.route('/')      
- def main():       
+@app.route('/')      
+def main():       
     return render_template('main.html') 
 
 if __name__ == "__main__":
