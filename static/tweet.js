@@ -25,6 +25,7 @@ function Tweet(data) {
     }); 
 
    self.save = function() { 
+    var new_tweet = new Tweet({username: self.username(), body: self.body()})
     return $.ajax({ 
     url: '/api/v2/tweets', 
     contentType: 'application/json', 
@@ -33,10 +34,10 @@ function Tweet(data) {
        'username': self.username(), 
        'body': self.body(), 
     }), 
-    success: function(data) { 
+    success: function(data, status, jq) { 
        alert("success") 
             console.log("Pushing to users array"); 
-            self.push(new Tweet({ username: data.username, body: data.body})); 
+            self.tweets_list.push(new_tweet); 
             return; 
     }, 
     error: function() { 

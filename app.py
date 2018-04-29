@@ -17,7 +17,7 @@ app = Flask(__name__)
 app.debug = True
 
 CORS(app)
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+"""cors = CORS(app, resources={r"/api/*": {"origins": "*"}})"""
 
 MYSQL_PORT=int(os.environ.get('MYSQL_PORT'))
 MYSQL_NAME=os.environ.get('MYSQL_NAME')
@@ -181,7 +181,7 @@ def list_tweets():
     data = cur.fetchall()
     if data != 0:
         for row in data:
-            tweets = {'Tweet By' :  row[0] , 'Body' : row[1], 'Timestamp': str(row[2]), 'id' : row[3]}
+            tweets = {'tweetedby' :  row[0] , 'body' : row[1], 'timestamp': str(row[2]), 'id' : row[3]}
             api_list.append(tweets)
     else:
         return api_list
