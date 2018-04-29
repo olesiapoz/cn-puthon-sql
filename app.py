@@ -11,12 +11,14 @@ from flask import render_template
 import MySQLdb, os
 from flask_cors import CORS, cross_origin 
 from time import gmtime, strftime
+import flask
 
 
 app = Flask(__name__)
 app.debug = True
 
 CORS(app)
+app.secret_key = 'F12Zr47j\3yX R~X@H!jmM]Lwf/,?KT'
 """cors = CORS(app, resources={r"/api/*": {"origins": "*"}})"""
 
 MYSQL_PORT=int(os.environ.get('MYSQL_PORT'))
@@ -266,7 +268,16 @@ def addname():
 @app.route('/clear')       
 def clearsession():       # Clear the session       
     session.clear()       # Redirect the user to the main page       
-    return redirect(url_for('main')) 
+    return redirect(url_for('main'))
+
+@app.route('/set_cookie') 
+def cookie_insertion(): 
+    redirect_to_main = redirect('/') 
+    response = current_app.make_response(redirect_to_main )   
+    response.set_cookie('cookie_name',value='values') 
+    return response 
+
+
 
 if __name__ == "__main__":
     app.run()
